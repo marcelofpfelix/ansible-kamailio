@@ -1,0 +1,3 @@
+---
+kamailio_version: "54" # The full list of Debian repos can be found at http://deb.kamailio.org/
+debian_sources_dir: "/etc/apt/sources.list.d"

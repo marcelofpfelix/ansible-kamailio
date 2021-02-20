@@ -1,0 +1,51 @@
+---
+- name: Add keys for Kamailio repo
+  apt_key:
+    url: http://deb.kamailio.org/kamailiodebkey.gpg
+    state: present
+  become: true
+
+
+- name: Add repo to sources.list
+  apt_repository:
+    repo: deb http://deb.kamailio.org/kamailio{{kamailio_version}} {{hostvars[inventory_hostname]['ansible_lsb']['codename']}} main
+    state: present
+  become: true
+
+
+- name: Copy Config Template
+  # Copies config from the template, fills in variables and uplaods to the server
+  template:
+    src: kamailio.cfg.j2
+    dest: /etc/kamailio/kamailio.cfg
+    owner: root
+    group: root
+    backup: yes
+  register: config_changed
+  become: true
+
+
+- name: Install Kamailio
+  # Updates cache (apt-get update) and then installs Kamailio
+  apt:
+    name: kamailio
+    update_cache: yes
+    state: present
+  register: kamailio_installed_firstrun
+  become: true
+
+
+- name: Restart Kamailio if config changed
+  service:
+    name: kamailio
+    state: restarted
+  when: config_changed.changed
+  become: true
+
+
+- name: Start Kamailio if installed for the first time
+  service:
+    name: kamailio
+    state: started
+  when: kamailio_installed_firstrun.changed
+  become: true
