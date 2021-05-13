@@ -1,15 +1,42 @@
 ---
 - hosts: all
-
   vars_files:
     - vars/main.yml
-
   pre_tasks:
     - name: Include playbook configuration.
       include_vars: "{{ item }}"
       with_fileglob:
         - "{{ playbook_dir }}/config.yml"
       tags: ['always']
-
   tasks:
     - include_tasks: tasks/kamailio.yml
+
+# mysql
+- hosts: all
+  become: yes
+  vars_files:
+    - vars/mysql.yml
+  pre_tasks:
+    - name: installing python3 mysql libraries
+      apt: name=python3-mysqldb state=present
+  roles:   
+     - role: geerlingguy.mysql
+
+# phpmyadmin
+- hosts: all
+  vars_files:
+    - vars/mysql.yml
+  roles:
+    - { role: geerlingguy.phpmyadmin }
+    
+- hosts: all
+  vars_files:
+    - vars/main.yml
+  pre_tasks:
+    - name: Include playbook configuration.
+      include_vars: "{{ item }}"
+      with_fileglob:
+        - "{{ playbook_dir }}/config.yml"
+      tags: ['always']
+  tasks:
+    - include_tasks: tasks/kamailio_mysql.yml

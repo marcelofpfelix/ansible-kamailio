@@ -1,0 +1,50 @@
+---
+- name: Install kamailio-mysql-modules
+  # Updates cache (apt-get update) and then installs kamailio-mysql-modules
+  apt:
+    name: kamailio-mysql-modules
+    update_cache: yes
+    state: present
+  become: true
+
+
+- name: Copy Config Template
+  # Copies config from the template, fills in variables and uplaods to the server
+  template:
+    src: templates/kamailio.cfg
+    dest: /etc/kamailio/kamailio.cfg
+    owner: root
+    group: root
+    backup: yes
+  register: config_changed
+  become: true
+
+- name: Copy kamctl
+  # Copies config from the template, fills in variables and uplaods to the server
+  template:
+    src: templates/kamctlrc.j2
+    dest: /etc/kamailio/kamctlrc
+    owner: root
+    group: root
+    backup: yes
+  register: config_changed
+  become: true
+
+  # https://www.middlewareinventory.com/blog/ansible-lineinfile-multiple-lines-replace-multiple-lines/
+
+- name: Copy Config Template lab8
+  # Copies config from the template, fills in variables and uplaods to the server
+  template:
+    src: templates/kamailio_lab8.cfg
+    dest: /etc/kamailio/kamailio_lab8.cfg
+    owner: root
+    group: root
+    backup: yes
+  become: true
+
+- name: Restart Kamailio if config changed
+  service:
+    name: kamailio
+    state: restarted
+  when: config_changed.changed
+  become: true

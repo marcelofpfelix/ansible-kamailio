@@ -1,0 +1,12 @@
+mysql_root_password: "Mysql.1"
+mysql_databases:
+  - name: test
+    encoding: latin1
+    collation: latin1_general_ci
+mysql_users:
+  - name: felixmf
+    host: "%"
+    password: my5yhtY7zPJzV8vu
+    priv: "*.*:ALL"
+phpmyadmin_mysql_user: kamailio
+phpmyadmin_mysql_password: kamailio

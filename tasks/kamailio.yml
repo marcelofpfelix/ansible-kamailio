@@ -20,27 +20,11 @@
   register: kamailio_installed_firstrun
   become: true
 
-- name: Copy Config Template
-  # Copies config from the template, fills in variables and uplaods to the server
-  template:
-    src: templates/kamailio.cfg.j2
-    dest: /etc/kamailio/kamailio.cfg
-    owner: root
-    group: root
-    backup: yes
-  register: config_changed
-  become: true
-
-- name: Restart Kamailio if config changed
-  service:
-    name: kamailio
-    state: restarted
-  when: config_changed.changed
-  become: true
-
 - name: Start Kamailio if installed for the first time
   service:
     name: kamailio
     state: started
   when: kamailio_installed_firstrun.changed
   become: true
+
+  
