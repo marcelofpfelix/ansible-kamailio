@@ -22,3 +22,5 @@ mysql> use dbname;
 mysql> show grants for 'root'@'localhost';
 SELECT host,user,authentication_string FROM mysql.user;
 ```
+
+
